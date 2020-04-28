@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -14,6 +15,7 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class Game extends Pane {
     private static double FOUNDATION_GAP = 0;
     private static double TABLEAU_GAP = 30;
 
+    Button resetButton = new Button("Restart");
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
         Card card = (Card) e.getSource();
@@ -94,7 +97,37 @@ public class Game extends Pane {
 
     public Game() {
         deck = Card.createNewDeck();
+        getChildren().add(resetButton);
         initPiles();
+        dealCards();
+        addButtonEventHandlers();
+    }
+
+    public void restartGame(){
+        for (Card card:stockPile.getCards()) {
+            getChildren().remove(card);
+
+        }
+
+        for (Card card:discardPile.getCards()) {
+            getChildren().remove(card);
+        }
+
+        for (int i = 0; i< tableauPiles.size(); i++) {
+            for (Card card: tableauPiles.get(i).getCards()) {
+                getChildren().remove(card);
+            }
+        }
+
+        stockPile = null;
+        stockPile = new Pile(Pile.PileType.STOCK, "Stock", STOCK_GAP);
+        stockPile.setBlurredBackground();
+        stockPile.setLayoutX(95);
+        stockPile.setLayoutY(20);
+        stockPile.setOnMouseClicked(stockReverseCardsHandler);
+        getChildren().add(stockPile);
+        deck = Card.createNewDeck();
+        Collections.shuffle(deck);
         dealCards();
     }
 
@@ -103,6 +136,11 @@ public class Game extends Pane {
         card.setOnMouseDragged(onMouseDraggedHandler);
         card.setOnMouseReleased(onMouseReleasedHandler);
         card.setOnMouseClicked(onMouseClickedHandler);
+    }
+
+    public void addButtonEventHandlers(){
+        resetButton.setOnAction((event -> restartGame()));
+
     }
 
     public void refillStockFromDiscard() {
