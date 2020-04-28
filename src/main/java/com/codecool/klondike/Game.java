@@ -97,6 +97,7 @@ public class Game extends Pane {
 
     public Game() {
         deck = Card.createNewDeck();
+        Collections.shuffle(deck);
         getChildren().add(resetButton);
         initPiles();
         dealCards();
