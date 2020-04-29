@@ -13,7 +13,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -37,12 +36,13 @@ public class Game extends Pane {
     private static double FOUNDATION_GAP = 0;
     private static double TABLEAU_GAP = 23;
 
-    MenuItem menuItem1 = new MenuItem("Undo - Beta");
+    MenuItem menuItem1 = new MenuItem("Undo Move - Beta");
     MenuItem menuItem2 = new MenuItem("Change Theme");
     MenuItem menuItem3 = new MenuItem("Restart");
     MenuItem menuItem4 = new MenuItem("Exit");
 
     MenuButton menuButton = new MenuButton("Menu", null, menuItem1, menuItem2, menuItem3, menuItem4);
+    private List<Card> lastMoveList = new ArrayList<>();
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
         Card card = (Card) e.getSource();
@@ -51,6 +51,7 @@ public class Game extends Pane {
                 card.moveToPile(discardPile);
                 card.flip();
                 card.setMouseTransparent(false);
+                lastMoveList.add(card);
                 System.out.println("Placed " + card + " to the waste.");
             }
         }
@@ -89,7 +90,6 @@ public class Game extends Pane {
             } catch (IndexOutOfBoundsException ex) {
                 System.out.println("Out of index");
             }
-
 
             for (Card draggedCard : draggedCards) {
                 draggedCard.getDropShadow().setRadius(20);
@@ -139,20 +139,10 @@ public class Game extends Pane {
                 discardPile.isEmpty() &&
                 tableauPiles.isEmpty()) {
             System.out.println("Congratulations! You Won!");
-            popUp();
+            Popup.display("Congratulations! You Won!");
             return true;
         }
         return false;
-    }
-
-    public void popUp() {
-        Label label = new Label("Congratulations");
-        Popup popup = new Popup();
-        label.setStyle(" -fx-background-color: white;");
-        popup.getContent().add(label);
-        label.setMinWidth(80);
-        label.setMinHeight(50);
-//        popup.show();
     }
 
     public Game() {
@@ -178,11 +168,22 @@ public class Game extends Pane {
 
     public void addMenuEventHandlers(){
         // e (Event) option selected via Lambda
-        menuItem1.setOnAction((e -> popUp() ));
+        menuItem1.setOnAction((e -> undoMove()));
         menuItem2.setOnAction((e -> changeTheme()));
         menuItem3.setOnAction((e -> restartGame()));
         menuItem4.setOnAction((e -> Platform.exit()));
 
+    }
+
+    public void undoMove(){
+        try {
+            int lastIndex = lastMoveList.size()-1;
+                lastMoveList.get(lastIndex).flip();
+                lastMoveList.get(lastIndex).moveToPile(stockPile);
+                lastMoveList.clear();
+        }catch (Exception e){
+            Popup.display("Out of last move !");
+        }
     }
 
     public void changeTheme(){
