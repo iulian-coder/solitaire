@@ -36,7 +36,6 @@ public class Game extends Pane {
     private static double FOUNDATION_GAP = 0;
     private static double TABLEAU_GAP = 23;
 
-
     MenuItem menuItem1 = new MenuItem("Undo - Beta");
     MenuItem menuItem2 = new MenuItem("Change Theme");
     MenuItem menuItem3 = new MenuItem("Restart");
@@ -67,37 +66,39 @@ public class Game extends Pane {
 
     private EventHandler<MouseEvent> onMouseDraggedHandler = e -> {
         Card card = (Card) e.getSource();
-        Pile activePile = card.getContainingPile();
-        ObservableList<Card> draggedPile = card.getContainingPile().getCards();
-        if (activePile.getPileType() == Pile.PileType.STOCK)
-            return;
-        if (activePile.getPileType() == Pile.PileType.DISCARD)
-            if (card != discardPile.getTopCard())
+        if (!card.isFaceDown()) {
+            Pile activePile = card.getContainingPile();
+            ObservableList<Card> draggedPile = card.getContainingPile().getCards();
+            if (activePile.getPileType() == Pile.PileType.STOCK)
                 return;
+            if (activePile.getPileType() == Pile.PileType.DISCARD)
+                if (card != discardPile.getTopCard())
+                    return;
 
-        double offsetX = e.getSceneX() - dragStartX;
-        double offsetY = e.getSceneY() - dragStartY;
+            double offsetX = e.getSceneX() - dragStartX;
+            double offsetY = e.getSceneY() - dragStartY;
 
-        draggedCards.clear();
-        draggedCards.add(card);
+            draggedCards.clear();
+            draggedCards.add(card);
 
-        try {
-            for (int i = draggedPile.indexOf(card) + 1; i < draggedPile.size(); i++) {
-                draggedCards.add(activePile.getCards().get(i));
-            }
-        }catch (IndexOutOfBoundsException ex) {
+            try {
+                for (int i = draggedPile.indexOf(card) + 1; i < draggedPile.size(); i++) {
+                    draggedCards.add(activePile.getCards().get(i));
+                }
+            } catch (IndexOutOfBoundsException ex) {
                 System.out.println("Out of index");
-        }
+            }
 
 
-        for (Card draggedCard : draggedCards) {
-            draggedCard.getDropShadow().setRadius(20);
-            draggedCard.getDropShadow().setOffsetX(10);
-            draggedCard.getDropShadow().setOffsetY(10);
+            for (Card draggedCard : draggedCards) {
+                draggedCard.getDropShadow().setRadius(20);
+                draggedCard.getDropShadow().setOffsetX(10);
+                draggedCard.getDropShadow().setOffsetY(10);
 
-            draggedCard.toFront();
-            draggedCard.setTranslateX(offsetX);
-            draggedCard.setTranslateY(offsetY);
+                draggedCard.toFront();
+                draggedCard.setTranslateX(offsetX);
+                draggedCard.setTranslateY(offsetY);
+            }
         }
     };
 
@@ -110,17 +111,25 @@ public class Game extends Pane {
 
         if (pile != null) {
             isMoveValid(card, pile);
+            System.out.println("a");
             handleValidMove(card, pile);
+            System.out.println("b");
             autoFlip(tableauPiles);
+            System.out.println("c");
             isGameWon();
+            System.out.println("d");
         }else if (pileFoundation != null) {
             isMoveValid(card, pileFoundation);
+            System.out.println("e");
             handleValidMove(card, pileFoundation);
+            System.out.println("f");
             autoFlip(tableauPiles);
+            System.out.println("g");
             isGameWon();
+            System.out.println("h");
         }else {
             draggedCards.forEach(MouseUtil::slideBack);
-            draggedCards = null;
+            draggedCards.clear();
         }
     };
 
