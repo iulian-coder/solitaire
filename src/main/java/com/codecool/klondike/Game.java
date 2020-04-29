@@ -168,7 +168,7 @@ public class Game extends Pane {
 
     public void addMenuEventHandlers(){
         // e (Event) option selected via Lambda
-        menuItem1.setOnAction((e -> popUp() ));
+//        menuItem1.setOnAction((e -> undo() ));
         menuItem2.setOnAction((e -> changeTheme()));
         menuItem3.setOnAction((e -> restartGame()));
         menuItem4.setOnAction((e -> Platform.exit()));
