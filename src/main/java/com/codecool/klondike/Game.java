@@ -16,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Popup;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -154,32 +155,8 @@ public class Game extends Pane {
     }
 
     public void restartGame(){
-        setTableBackground(new Image("/table/green.png"));
-        for (Card card:stockPile.getCards()) {
-            getChildren().remove(card);
-
-        }
-
-        for (Card card:discardPile.getCards()) {
-            getChildren().remove(card);
-        }
-
-        for (int i = 0; i< tableauPiles.size(); i++) {
-            for (Card card: tableauPiles.get(i).getCards()) {
-                getChildren().remove(card);
-            }
-        }
-
-        stockPile = null;
-        stockPile = new Pile(Pile.PileType.STOCK, "Stock", STOCK_GAP);
-        stockPile.setBlurredBackground();
-        stockPile.setLayoutX(95);
-        stockPile.setLayoutY(20);
-        stockPile.setOnMouseClicked(stockReverseCardsHandler);
-        getChildren().add(stockPile);
-        deck = Card.createNewDeck();
-        Collections.shuffle(deck);
-        dealCards();
+        Klondike game = new Klondike();
+        game.start(Klondike.stage);
     }
 
     public void addMouseEventHandlers(Card card) {
@@ -191,7 +168,7 @@ public class Game extends Pane {
 
     public void addMenuEventHandlers(){
         // e (Event) option selected via Lambda
-        menuItem1.setOnAction((e -> System.out.println("Undo beta") ));
+        menuItem1.setOnAction((e -> popUp() ));
         menuItem2.setOnAction((e -> changeTheme()));
         menuItem3.setOnAction((e -> restartGame()));
         menuItem4.setOnAction((e -> Platform.exit()));
@@ -207,6 +184,13 @@ public class Game extends Pane {
 
     public void refillStockFromDiscard() {
         //TODO
+        //DONE
+        for (Card card : deck){
+            if (card.getContainingPile().getPileType() == Pile.PileType.DISCARD){
+                card.moveToPile(stockPile);
+                card.flip();
+            }
+        }
         System.out.println("Stock refilled from discard pile.");
     }
 
