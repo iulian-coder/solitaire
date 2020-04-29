@@ -107,6 +107,11 @@ public class Card extends ImageView {
         return result;
     }
 
+    public void changeThemeCards(Image newCardBackImage){
+        backFace = newCardBackImage;
+        setImage(faceDown ? backFace : frontFace);
+    }
+
     public static void loadCardImages() {
         cardBackImage = new Image("card_images/card_back.png");
         int suitValue;

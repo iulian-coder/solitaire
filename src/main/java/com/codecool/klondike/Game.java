@@ -1,10 +1,13 @@
 package com.codecool.klondike;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -35,7 +38,13 @@ public class Game extends Pane {
     private static double FOUNDATION_GAP = 0;
     private static double TABLEAU_GAP = 30;
 
-    Button resetButton = new Button("Restart");
+
+    MenuItem menuItem1 = new MenuItem("Undo - Beta");
+    MenuItem menuItem2 = new MenuItem("Change Theme");
+    MenuItem menuItem3 = new MenuItem("Restart");
+    MenuItem menuItem4 = new MenuItem("Exit");
+
+    MenuButton menuButton = new MenuButton("Menu", null, menuItem1, menuItem2, menuItem3, menuItem4);
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
         Card card = (Card) e.getSource();
@@ -98,13 +107,14 @@ public class Game extends Pane {
     public Game() {
         deck = Card.createNewDeck();
         Collections.shuffle(deck);
-        getChildren().add(resetButton);
+        getChildren().add(menuButton);
         initPiles();
         dealCards();
-        addButtonEventHandlers();
+        addMenuEventHandlers();
     }
 
     public void restartGame(){
+        setTableBackground(new Image("/table/green.png"));
         for (Card card:stockPile.getCards()) {
             getChildren().remove(card);
 
@@ -139,9 +149,20 @@ public class Game extends Pane {
         card.setOnMouseClicked(onMouseClickedHandler);
     }
 
-    public void addButtonEventHandlers(){
-        resetButton.setOnAction((event -> restartGame()));
+    public void addMenuEventHandlers(){
+        // e (Event) option selected via Lambda
+        menuItem1.setOnAction((e -> System.out.println("Undo beta") ));
+        menuItem2.setOnAction((e -> changeTheme()));
+        menuItem3.setOnAction((e -> restartGame()));
+        menuItem4.setOnAction((e -> Platform.exit()));
 
+    }
+
+    public void changeTheme(){
+        setTableBackground(new Image("/table/multicolor.png"));
+        for (Card card: deck) {
+            card.changeThemeCards(new Image("card_images/card_back_cool.png"));
+        }
     }
 
     public void refillStockFromDiscard() {
@@ -222,6 +243,7 @@ public class Game extends Pane {
     public void dealCards() {
         Iterator<Card> deckIterator = deck.iterator();
         //TODO
+
         deckIterator.forEachRemaining(card -> {
             stockPile.addCard(card);
             addMouseEventHandlers(card);
