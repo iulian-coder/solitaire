@@ -33,7 +33,7 @@ public class Game extends Pane {
 
     private static double STOCK_GAP = 1;
     private static double FOUNDATION_GAP = 0;
-    private static double TABLEAU_GAP = 30;
+    private static double TABLEAU_GAP = 10;
 
 
     MenuItem menuItem1 = new MenuItem("Undo - Beta");
@@ -114,7 +114,7 @@ public class Game extends Pane {
         popup.getContent().add(label);
         label.setMinWidth(80);
         label.setMinHeight(50);
-        popup.show();
+//        popup.show();
     }
 
     public Game() {
@@ -123,7 +123,7 @@ public class Game extends Pane {
         getChildren().add(menuButton);
         initPiles();
         dealCards();
-        addButtonEventHandlers();
+//        addButtonEventHandlers();
         isGameWon();
         addMenuEventHandlers();
 
@@ -258,7 +258,30 @@ public class Game extends Pane {
 
     public void dealCards() {
         Iterator<Card> deckIterator = deck.iterator();
-        //TODO to arrange cards as they should look initially
+
+        for (int i=0; i<tableauPiles.size(); i++) {
+            Pile pile = tableauPiles.get(i);
+            if (i>0) {
+                for (int j=0; j<i+1; j++) {
+                    Card cardBeingPlaced = deckIterator.next();
+                    pile.addCard(cardBeingPlaced);
+                    addMouseEventHandlers(cardBeingPlaced);
+                    cardBeingPlaced.setContainingPile(pile);
+                    if (j == i) {
+                        cardBeingPlaced.flip();
+                    }
+                    getChildren().add(cardBeingPlaced);
+                }
+            } else {
+                Card cardBeingPlaced = deckIterator.next();
+                pile.addCard(cardBeingPlaced);
+                addMouseEventHandlers(cardBeingPlaced);
+                cardBeingPlaced.setContainingPile(pile);
+                cardBeingPlaced.flip();
+                getChildren().add(cardBeingPlaced);
+            }
+        }
+
         deckIterator.forEachRemaining(card -> {
             stockPile.addCard(card);
             addMouseEventHandlers(card);
