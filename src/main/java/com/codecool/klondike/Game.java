@@ -5,14 +5,11 @@ import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.stage.Popup;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -91,8 +88,24 @@ public class Game extends Pane {
     };
 
     public boolean isGameWon() {
-        //TODO
+        if (stockPile.isEmpty() &&
+                discardPile.isEmpty() &&
+                tableauPiles.isEmpty()) {
+            System.out.println("Won");
+            popUp();
+            return true;
+        }
         return false;
+    }
+
+    public void popUp() {
+        Label label = new Label("Congratulations");
+        Popup popup = new Popup();
+        label.setStyle(" -fx-background-color: white;");
+        popup.getContent().add(label);
+        label.setMinWidth(80);
+        label.setMinHeight(50);
+        popup.show();
     }
 
     public Game() {
@@ -102,6 +115,7 @@ public class Game extends Pane {
         initPiles();
         dealCards();
         addButtonEventHandlers();
+        isGameWon();
     }
 
     public void restartGame(){
@@ -221,7 +235,7 @@ public class Game extends Pane {
 
     public void dealCards() {
         Iterator<Card> deckIterator = deck.iterator();
-        //TODO
+        //TODO to arrange cards as they should look initially
         deckIterator.forEachRemaining(card -> {
             stockPile.addCard(card);
             addMouseEventHandlers(card);
