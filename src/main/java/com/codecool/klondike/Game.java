@@ -5,6 +5,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -35,7 +37,7 @@ public class Game extends Pane {
 
     private static double STOCK_GAP = 1;
     private static double FOUNDATION_GAP = 0;
-    private static double TABLEAU_GAP = 23;
+    private static double TABLEAU_GAP = 30;
 
     MenuItem menuItem1 = new MenuItem("Undo - Beta");
     MenuItem menuItem2 = new MenuItem("Change Theme");
@@ -112,23 +114,15 @@ public class Game extends Pane {
 
         if (pile != null) {
             isMoveValid(card, pile);
-            System.out.println("a");
             handleValidMove(card, pile);
-            System.out.println("b");
             autoFlip(tableauPiles);
-            System.out.println("c");
             isGameWon();
-            System.out.println("d");
-        }else if (pileFoundation != null) {
+        } else if (pileFoundation != null) {
             isMoveValid(card, pileFoundation);
-            System.out.println("e");
             handleValidMove(card, pileFoundation);
-            System.out.println("f");
             autoFlip(tableauPiles);
-            System.out.println("g");
             isGameWon();
-            System.out.println("h");
-        }else {
+        } else {
             draggedCards.forEach(MouseUtil::slideBack);
             draggedCards.clear();
         }
@@ -139,20 +133,16 @@ public class Game extends Pane {
                 discardPile.isEmpty() &&
                 tableauPiles.isEmpty()) {
             System.out.println("Congratulations! You Won!");
-            popUp();
+            showAlert();
             return true;
         }
         return false;
     }
 
-    public void popUp() {
-        Label label = new Label("Congratulations");
-        Popup popup = new Popup();
-        label.setStyle(" -fx-background-color: white;");
-        popup.getContent().add(label);
-        label.setMinWidth(80);
-        label.setMinHeight(50);
-//        popup.show();
+    public void showAlert() {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setContentText("Congratulations! You Won!");
+        a.showAndWait();
     }
 
     public Game() {
