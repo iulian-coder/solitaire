@@ -125,19 +125,16 @@ public class Game extends Pane {
             draggedCards.forEach(MouseUtil::slideBack);
             draggedCards.clear();
         }
-
     };
 
 
-    public boolean isGameWon() {
-        if (stockPile.isEmpty() &&
-                discardPile.isEmpty() &&
-                tableauPiles.isEmpty()) {
+    public void isGameWon() {
+        if (stockPile.isEmpty()) {
+//                discardPile.isEmpty()) {
+//                tableauPiles.isEmpty()) {
             System.out.println("Congratulations! You Won!");
             Popup.display("Congratulations! You Won!");
-            return true;
         }
-        return false;
     }
 
     public Game() {
