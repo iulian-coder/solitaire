@@ -44,6 +44,7 @@ public class Game extends Pane {
     MenuItem menuItem4 = new MenuItem("Exit");
 
     MenuButton menuButton = new MenuButton("Menu", null, menuItem1, menuItem2, menuItem3, menuItem4);
+
     private List<Card> lastMoveList = new ArrayList<>();
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
@@ -115,18 +116,18 @@ public class Game extends Pane {
         if (pile != null) {
             isMoveValid(card, pile);
             handleValidMove(card, pile);
-            autoFlip(tableauPiles);
             isGameWon();
         } else if (pileFoundation != null) {
             isMoveValid(card, pileFoundation);
             handleValidMove(card, pileFoundation);
-            autoFlip(tableauPiles);
             isGameWon();
         } else {
             draggedCards.forEach(MouseUtil::slideBack);
             draggedCards.clear();
         }
+
     };
+
 
     public boolean isGameWon() {
         if (stockPile.isEmpty() &&
@@ -163,7 +164,6 @@ public class Game extends Pane {
     public void addMenuEventHandlers(){
         // e (Event) option selected via Lambda
         menuItem1.setOnAction((e -> undoMove()));
-        ouseDragAndRelease
         menuItem2.setOnAction((e -> changeTheme()));
         menuItem3.setOnAction((e -> restartGame()));
         menuItem4.setOnAction((e -> Platform.exit()));
@@ -189,8 +189,6 @@ public class Game extends Pane {
     }
 
     public void refillStockFromDiscard() {
-        //TODO
-        //DONE
         for (Card card : deck){
             if (card.getContainingPile().getPileType() == Pile.PileType.DISCARD){
                 card.moveToPile(stockPile);
@@ -217,8 +215,9 @@ public class Game extends Pane {
             if (Card.isSameSuit(card, destPile.getTopCard()) && destPile.getTopCard().getRank().getRankNum() == card.getRank().getRankNum()-1) {
                 return true;
             }
-        return true;
+        return false;
     }
+
     private Pile getValidIntersectingPile(Card card, List<Pile> piles) {
         Pile result = null;
         for (Pile pile : piles) {
@@ -325,12 +324,10 @@ public class Game extends Pane {
                 BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
     }
 
-    private void autoFlip(List<Pile> piles) {
-        for (Pile pile : piles) {
-            Card topCard = pile.getTopCard();
-            if (topCard != null && topCard.isFaceDown()) {
-                topCard.flip();
-            }
+    public static void autoFlip(Pile pile) {
+        Card topCard = pile.getTopCard();
+        if (topCard != null && topCard.isFaceDown()) {
+            topCard.flip();
         }
     }
 
